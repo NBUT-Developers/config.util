@@ -6,8 +6,9 @@
  */
 'use strict';
 
-/* jshint ignore: start */
-var Utils = require("util");
+var Utils = require('util');
+
+var DeferredConfig = require('config/defer').DeferredConfig;
 
 var DEFAULT_CLONE_DEPTH = 20;
 
@@ -34,7 +35,7 @@ util.makeHidden = function(object, property, value) {
     }
 
     return object;
-}
+};
 
 // refer to
 // https://github.com/lorenwest/node-config/blob/656abf109ca3387a3efb81687f0d9900d2c68a71/lib/config.js#L510-L548
@@ -77,7 +78,6 @@ util.makeImmutable = function(object, property, value) {
 // refer to
 // https://github.com/lorenwest/node-config/blob/656abf109ca3387a3efb81687f0d9900d2c68a71/lib/config.js#L1269-L1314
 util.equalsDeep = function(object1, object2, depth) {
-    var t = this;
     depth = (depth === null ? DEFAULT_CLONE_DEPTH : depth);
     if (depth < 0) {
         return {};
@@ -89,11 +89,11 @@ util.equalsDeep = function(object1, object2, depth) {
     if (object1 === object2) {
         return true;
     }
-    if (typeof(object1) != 'object' || typeof(object2) != 'object') {
+    if (typeof(object1) !== 'object' || typeof(object2) !== 'object') {
         return false;
     }
 
-    if (Object.keys(object1).length != Object.keys(object2).length) {
+    if (Object.keys(object1).length !== Object.keys(object2).length) {
         return false;
     }
 
@@ -116,14 +116,14 @@ util.equalsDeep = function(object1, object2, depth) {
 // refer to
 // https://github.com/lorenwest/node-config/blob/656abf109ca3387a3efb81687f0d9900d2c68a71/lib/config.js#L1336-L1368
 util.diffDeep = function(object1, object2, depth) {
-    var t = this,
-        diff = {};
+    var diff = {};
     depth = (depth === null ? DEFAULT_CLONE_DEPTH : depth);
     if (depth < 0) {
         return {};
     }
 
     for (var parm in object2) {
+        if(!object2.hasOwnProperty(parm)) continue;
         var value1 = object1[parm];
         var value2 = object2[parm];
         if (value1 && value2 && util.isObject(value2)) {
@@ -148,7 +148,7 @@ util.cloneDeep = function cloneDeep(parent, depth, circular, prototype) {
     var allParents = [];
     var allChildren = [];
 
-    var useBuffer = typeof Buffer != 'undefined';
+    var useBuffer = typeof Buffer !== 'undefined';
 
     if (typeof circular === 'undefined')
         circular = true;
@@ -164,7 +164,7 @@ util.cloneDeep = function cloneDeep(parent, depth, circular, prototype) {
             return parent;
 
         var child;
-        if (typeof parent != 'object') {
+        if (typeof parent !== 'object') {
             return parent;
         }
 
@@ -187,7 +187,7 @@ util.cloneDeep = function cloneDeep(parent, depth, circular, prototype) {
         if (circular) {
             var index = allParents.indexOf(parent);
 
-            if (index != -1) {
+            if (index !== -1) {
                 return allChildren[index];
             }
             allParents.push(parent);
@@ -195,6 +195,7 @@ util.cloneDeep = function cloneDeep(parent, depth, circular, prototype) {
         }
 
         for (var i in parent) {
+            if(!parent.hasOwnProperty(i)) continue;
             var propDescriptor = Object.getOwnPropertyDescriptor(parent, i);
             var hasGetter = ((propDescriptor !== undefined) && (propDescriptor.get !== undefined));
 
@@ -214,10 +215,9 @@ util.cloneDeep = function cloneDeep(parent, depth, circular, prototype) {
 // refer to
 // https://github.com/lorenwest/node-config/blob/656abf109ca3387a3efb81687f0d9900d2c68a71/lib/config.js#L1383-L1428
 util.extendDeep = function(mergeInto) {
-    var t = this;
     var vargs = Array.prototype.slice.call(arguments, 1);
     var depth = vargs.pop();
-    if (typeof(depth) != 'number') {
+    if (typeof(depth) !== 'number') {
         vargs.push(depth);
         depth = DEFAULT_CLONE_DEPTH;
     }
@@ -228,6 +228,7 @@ util.extendDeep = function(mergeInto) {
 
     vargs.forEach(function(mergeFrom) {
         for (var prop in mergeFrom) {
+            if(!mergeFrom.hasOwnProperty(prop)) continue;
             var isDeferredFunc = mergeInto[prop] instanceof DeferredConfig;
             if (mergeFrom[prop] instanceof Date) {
                 mergeInto[prop] = mergeFrom[prop];
