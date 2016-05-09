@@ -1,0 +1,3 @@
+[submodule "config"]
+    path = .orig
+    url = https://github.com/lorenwest/node-config
