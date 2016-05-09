@@ -1,6 +1,6 @@
 {
   "name": "config.util",
-  "version": "1.20.2",
+  "version": "1.20.2-1",
   "description": "Stand alone util functions of https://github.com/lorenwest/node-config.",
   "main": "util.js",
   "directories": {
