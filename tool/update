@@ -1,0 +1,4 @@
+#/bin/bash
+
+echo "🚀 Pulling original repo..."
+cd .orig/ && git pull && cd ..
